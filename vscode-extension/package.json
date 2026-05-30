@@ -1,0 +1,56 @@
+{
+    "name": "html-visual-editor",
+    "displayName": "HTML 可视化编辑器",
+    "description": "在 VS Code 中可视化编辑 HTML 文件",
+    "version": "0.1.0",
+    "publisher": "your-publisher-name",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCustomEditor:htmlVisualEditor.editor"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "customEditors": [{
+            "viewType": "htmlVisualEditor.editor",
+            "displayName": "HTML 可视化编辑器",
+            "selector": [{
+                "filenamePattern": "*.html"
+            }],
+            "priority": "option"
+        }],
+        "commands": [{
+            "command": "htmlVisualEditor.openEditor",
+            "title": "用可视化编辑器打开",
+            "category": "HTML Editor"
+        }],
+        "menus": {
+            "explorer/context": [{
+                "command": "htmlVisualEditor.openEditor",
+                "when": "resourceExtname == .html",
+                "group": "navigation"
+            }]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^18.x",
+        "@types/vscode": "^1.75.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.0.0",
+        "@vscode/vsce": "^2.19.0"
+    }
+}

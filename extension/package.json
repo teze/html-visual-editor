@@ -1,0 +1,71 @@
+{
+    "name": "html-visual-editor",
+    "displayName": "HTML 可视化编辑器",
+    "description": "在 VS Code 中可视化编辑 HTML 文件",
+    "version": "0.1.0",
+    "publisher": "your-publisher-name",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:htmlVisualEditor.openEditor",
+        "onLanguage:html"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [{
+            "command": "htmlVisualEditor.openEditor",
+            "title": "HTML: 打开可视化编辑器",
+            "icon": "$(edit)"
+        }],
+        "menus": {
+            "editor/title": [{
+                "command": "htmlVisualEditor.openEditor",
+                "when": "resourceLangId == html",
+                "group": "navigation"
+            }],
+            "explorer/context": [{
+                "command": "htmlVisualEditor.openEditor",
+                "when": "resourceExtname == .html || resourceExtname == .htm",
+                "group": "navigation"
+            }]
+        },
+        "configuration": {
+            "title": "HTML 可视化编辑器",
+            "properties": {
+                "htmlVisualEditor.autoSave": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "自动保存编辑的更改"
+                },
+                "htmlVisualEditor.previewScale": {
+                    "type": "number",
+                    "default": 1.0,
+                    "minimum": 0.5,
+                    "maximum": 2.0,
+                    "description": "预览缩放比例"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.75.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.0.0",
+        "@vscode/vsce": "^2.19.0"
+    }
+}
