@@ -1,0 +1,15 @@
+{
+    "name": "html-visual-editor",
+    "version": "0.1.0",
+    "description": "单文件、零依赖的 HTML 可视化编辑器（开发期模块化，最终内联组装为 html-editor.html）",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "vitest run"
+    },
+    "devDependencies": {
+        "fast-check": "^3.23.1",
+        "jsdom": "^25.0.1",
+        "vitest": "^2.1.8"
+    }
+}

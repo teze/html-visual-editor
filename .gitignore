@@ -1,0 +1,48 @@
+# 依赖
+node_modules/
+
+# 测试与构建产物
+coverage/
+dist/
+build/
+*.tsbuildinfo
+
+# VS Code 本地历史（local-history 扩展生成）
+.history/
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 运行时与环境
+.env
+.env.*
+.cache/
+.tmp/
+.temp/
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# 编辑器
+*.swp
+*.swo
+*~
+.idea/
+
+# VS Code：保留共享配置，忽略个人化文件
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
