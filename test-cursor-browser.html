@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor 浏览器功能测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        /* Flexbox 示例 */
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .flex-item {
+            padding: 20px;
+            background: #0066ff;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* Grid 示例 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .grid-item {
+            padding: 30px;
+            background: #00d4aa;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* 卡片示例 */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 按钮 */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: #0052cc;
+        }
+
+        /* 嵌套结构示例 */
+        .nested-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .nested-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .nested-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .nested-main {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .nested-sidebar {
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cursor 浏览器功能测试页面</h1>
+
+        <div class="card">
+            <h2>测试说明</h2>
+            <p>这个页面包含了多种布局和元素，用于测试 Cursor 浏览器风格的编辑器功能：</p>
+            <ul>
+                <li>Flexbox 布局容器</li>
+                <li>Grid 布局容器</li>
+                <li>嵌套的复杂结构</li>
+                <li>各种样式属性（颜色、间距、圆角等）</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Flexbox 示例</h2>
+            <p>下面是一个 Flexbox 容器，包含三个子元素：</p>
+            <div class="flex-container">
+                <div class="flex-item">项目 1</div>
+                <div class="flex-item">项目 2</div>
+                <div class="flex-item">项目 3</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Grid 示例</h2>
+            <p>下面是一个 Grid 容器，3 列布局：</p>
+            <div class="grid-container">
+                <div class="grid-item">网格 1</div>
+                <div class="grid-item">网格 2</div>
+                <div class="grid-item">网格 3</div>
+                <div class="grid-item">网格 4</div>
+                <div class="grid-item">网格 5</div>
+                <div class="grid-item">网格 6</div>
+            </div>
+        </div>
+
+        <div class="nested-container">
+            <div class="nested-header">
+                <h2>嵌套布局示例</h2>
+                <button class="button">操作按钮</button>
+            </div>
+            <div class="nested-content">
+                <div class="nested-main">
+                    <h3>主要内容区域</h3>
+                    <p>这是一个使用 Grid 布局的嵌套结构，包含主内容区和侧边栏。</p>
+                    <p>你可以选中任何元素，在右侧面板中查看和编辑它的属性。</p>
+                </div>
+                <div class="nested-sidebar">
+                    <h3>侧边栏</h3>
+                    <p>这里是侧边栏内容。</p>
+                    <button class="button">查看更多</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

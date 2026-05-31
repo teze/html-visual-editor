@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 可视化编辑器 Pro - 对标 Cursor 浏览器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* 主色 */
+            --primary: #00d4aa;
+            --primary-hover: #00eebb;
+            --primary-active: #00c099;
+
+            /* 背景 */
+            --bg-primary: #111111;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #222222;
+
+            /* 边框 */
+            --border-color: #2a2a2a;
+            --border-hover: #3a3a3a;
+
+            /* 文字 */
+            --text-primary: #ffffff;
+            --text-secondary: #d0d0d0;
+            --text-tertiary: #888888;
+            --text-disabled: #555555;
+
+            /* 间距 */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+
+            /* 字体 */
+            --font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+            --font-mono: 'SF Mono', 'Monaco', 'Consolas', monospace;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        /* 顶栏 */
+        .topbar {
+            height: 48px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-lg);
+            gap: var(--space-md);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .topbar-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border-color);
+        }
+
+        .topbar-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .topbar-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+        }
+
+        .topbar-btn.primary {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .topbar-btn.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        /* 主容器 */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* 左侧面板 - 元素树 */
+        .left-panel {
+            width: 250px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .panel-header {
+            height: 36px;
+            padding: 0 var(--space-md);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-sm);
+        }
+
+        .panel-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .panel-body::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .panel-body::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+
+        /* 元素树 */
+        .tree-search {
+            margin-bottom: var(--space-md);
+        }
+
+        .tree-search input {
+            width: 100%;
+            padding: var(--space-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 11px;
+            outline: none;
+        }
+
+        .tree-search input:focus {
+            border-color: var(--primary);
+        }
+
+        .tree-node {
+            padding: var(--space-xs) var(--space-sm);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 11px;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        .tree-node:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tree-node.selected {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .tree-node-icon {
+            width: 12px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .tree-node-tag {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .tree-node.selected .tree-node-tag {
+            color: #000;
+        }
+
+        .tree-node-id {
+            color: #ffa500;
+            font-family: var(--font-mono);
+            font-size: 10px;
+        }
+
+        .tree-node.selected .tree-node-id {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .tree-node-class {
+            color: #87ceeb;
+            font-family: var(--font-mono);
+            font-size: 10px;
+        }
+
+        .tree-node.selected .tree-node-class {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .tree-children {
+            margin-left: 16px;
+        }
+
+        /* 中间区域 - 预览 */
+        .center-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .preview-toolbar {
+            height: 40px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            gap: var(--space-sm);
+        }
+
+        .device-btn {
+            padding: var(--space-xs) var(--space-md);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .device-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .device-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+
+        .preview-container {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            padding: var(--space-xl);
+            background: var(--bg-primary);
+        }
+
+        .preview-frame-wrapper {
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04),
+                0 16px 48px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 1280px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        #previewFrame {
+            width: 100%;
+            min-height: 500px;
+            border: none;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        /* 右侧面板 - 属性 */
+        .right-panel {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .property-section {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .property-section-header {
+            padding: var(--space-md);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .property-section-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .property-section-icon {
+            transition: transform 0.2s;
+        }
+
+        .property-section.collapsed .property-section-icon {
+            transform: rotate(-90deg);
+        }
+
+        .property-section-content {
+            padding: var(--space-md);
+            display: none;
+        }
+
+        .property-section.expanded .property-section-content {
+            display: block;
+        }
+
+        .property-row {
+            margin-bottom: var(--space-md);
+        }
+
+        .property-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: var(--space-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 11px;
+            outline: none;
+            font-family: var(--font-mono);
+        }
+
+        .property-input:focus {
+            border-color: var(--primary);
+        }
+
+        .property-input-group {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .property-input-group .property-input {
+            flex: 1;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .color-picker {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .empty-state {
+            padding: var(--space-xl);
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: var(--space-md);
+        }
+
+        /* 状态栏 */
+        .statusbar {
+            height: 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            gap: var(--space-md);
+            font-size: 10px;
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-color);
+        }
+
+        .status-dot.active {
+            background: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶栏 -->
+    <div class="topbar">
+        <div class="logo">HTML<span>Edit</span> Pro</div>
+        <div class="topbar-divider"></div>
+        <button class="topbar-btn" id="openBtn">📂 打开文件</button>
+        <input type="file" id="fileIn" accept=".html,.htm" style="display:none">
+        <button class="topbar-btn" id="demoBtn">✨ 示例页面</button>
+        <div class="flex-1"></div>
+        <button class="topbar-btn">↶ 撤销</button>
+        <button class="topbar-btn">↷ 重做</button>
+        <button class="topbar-btn primary" id="exportBtn">⬇ 导出 HTML</button>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧面板 - 元素树 -->
+        <div class="left-panel">
+            <div class="panel-header">元素树 (Components)</div>
+            <div class="panel-body">
+                <div class="tree-search">
+                    <input type="text" placeholder="搜索元素..." id="treeSearch">
+                </div>
+                <div id="elementTree">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📄</div>
+                        <div>打开 HTML 文件开始编辑</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间区域 - 预览 -->
+        <div class="center-panel">
+            <div class="preview-toolbar">
+                <button class="device-btn active" data-device="desktop">🖥️ 桌面</button>
+                <button class="device-btn" data-device="tablet">📱 平板</button>
+                <button class="device-btn" data-device="mobile">📱 手机</button>
+                <div class="flex-1"></div>
+                <span id="viewportSize" style="color: var(--text-tertiary); font-size: 10px;">1280 × 720</span>
+            </div>
+            <div class="preview-container">
+                <div class="preview-frame-wrapper">
+                    <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧面板 - 属性 -->
+        <div class="right-panel">
+            <div class="panel-header">属性面板 (Properties)</div>
+            <div class="panel-body" id="propertyPanel">
+                <div class="empty-state">
+                    <div class="empty-state-icon">👆</div>
+                    <div>选择元素查看属性</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="statusbar">
+        <div class="status-dot active"></div>
+        <span id="statusText">就绪</span>
+        <div class="flex-1"></div>
+        <span id="selectedElement">未选中元素</span>
+    </div>
+
+    <script>
+        // 元素树管理器
+        class ElementTreeManager {
+            constructor() {
+                this.selectedNode = null;
+                this.treeContainer = document.getElementById('elementTree');
+            }
+
+            buildTree(element, level = 0) {
+                if (!element || element.nodeType !== 1) return '';
+
+                const tag = element.tagName.toLowerCase();
+                const id = element.id ? `#${element.id}` : '';
+                const classes = element.className ? `.${element.className.split(' ').join('.')}` : '';
+                const hasChildren = element.children.length > 0;
+                const icon = hasChildren ? '▼' : '○';
+
+                let html = `
+                    <div class="tree-node" data-element-id="${this.getElementPath(element)}">
+                        <span class="tree-node-icon">${icon}</span>
+                        <span class="tree-node-tag">&lt;${tag}&gt;</span>
+                        ${id ? `<span class="tree-node-id">${id}</span>` : ''}
+                        ${classes ? `<span class="tree-node-class">${classes}</span>` : ''}
+                    </div>
+                `;
+
+                if (hasChildren) {
+                    html += '<div class="tree-children">';
+                    Array.from(element.children).forEach(child => {
+                        html += this.buildTree(child, level + 1);
+                    });
+                    html += '</div>';
+                }
+
+                return html;
+            }
+
+            getElementPath(element) {
+                const path = [];
+                let current = element;
+                while (current && current !== document.body) {
+                    const tag = current.tagName.toLowerCase();
+                    const index = Array.from(current.parentElement ? .children || [])
+                        .filter(el => el.tagName === current.tagName)
+                        .indexOf(current);
+                    path.unshift(`${tag}:${index}`);
+                    current = current.parentElement;
+                }
+                return path.join('>');
+            }
+
+            render(rootElement) {
+                if (!rootElement) {
+                    this.treeContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📄</div>
+                            <div>打开 HTML 文件开始编辑</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const html = this.buildTree(rootElement);
+                this.treeContainer.innerHTML = html;
+
+                // 绑定点击事件
+                this.treeContainer.querySelectorAll('.tree-node').forEach(node => {
+                    node.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.selectNode(node);
+                    });
+                });
+            }
+
+            selectNode(node) {
+                // 移除之前的选中状态
+                this.treeContainer.querySelectorAll('.tree-node').forEach(n => {
+                    n.classList.remove('selected');
+                });
+
+                // 添加选中状态
+                node.classList.add('selected');
+                this.selectedNode = node;
+
+                // 触发选中事件
+                const elementPath = node.dataset.elementId;
+                window.dispatchEvent(new CustomEvent('elementSelected', {
+                    detail: {
+                        elementPath
+                    }
+                }));
+            }
+        }
+
+        // 属性面板管理器
+        class PropertyPanelManager {
+            constructor() {
+                this.panel = document.getElementById('propertyPanel');
+                this.selectedElement = null;
+            }
+
+            render(element) {
+                if (!element) {
+                    this.panel.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👆</div>
+                            <div>选择元素查看属性</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.selectedElement = element;
+                const styles = window.getComputedStyle(element);
+
+                this.panel.innerHTML = `
+                    ${this.renderDesignSection(element, styles)}
+                    ${this.renderPositionSection(element, styles)}
+                    ${this.renderLayoutSection(element, styles)}
+                    ${this.renderDimensionsSection(element, styles)}
+                    ${this.renderTextSection(element, styles)}
+                `;
+
+                // 绑定折叠/展开事件
+                this.panel.querySelectorAll('.property-section-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        header.parentElement.classList.toggle('expanded');
+                        header.parentElement.classList.toggle('collapsed');
+                    });
+                });
+
+                // 默认展开第一个
+                const firstSection = this.panel.querySelector('.property-section');
+                if (firstSection) {
+                    firstSection.classList.add('expanded');
+                }
+            }
+
+            renderDesignSection(element, styles) {
+                return `
+                    <div class="property-section expanded">
+                        <div class="property-section-header">
+                            <span>Design</span>
+                            <span class="property-section-icon">▼</span>
+                        </div>
+                        <div class="property-section-content">
+                            <div class="property-row">
+                                <div class="property-label">Background</div>
+                                <div class="color-input-group">
+                                    <input type="color" class="color-picker" value="${this.rgbToHex(styles.backgroundColor) || '#ffffff'}">
+                                    <input type="text" class="property-input" value="${styles.backgroundColor}">
+                                </div>
+                            </div>
+                            <div class="property-row">
+                                <div class="property-label">Border</div>
+                                <div class="property-input-group">
+                                    <input type="text" class="property-input" placeholder="Width" value="${styles.borderWidth}">
+                                    <input type="text" class="property-input" placeholder="Style" value="${styles.borderStyle}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderPositionSection(element, styles) {
+                return `
+                    <div class="property-section">
+                        <div class="property-section-header">
+                            <span>Position</span>
+                            <span class="property-section-icon">▼</span>
+                        </div>
+                        <div class="property-section-content">
+                            <div class="property-row">
+                                <div class="property-label">Type</div>
+                                <select class="property-input">
+                                    <option ${styles.position === 'static' ? 'selected' : ''}>static</option>
+                                    <option ${styles.position === 'relative' ? 'selected' : ''}>relative</option>
+                                    <option ${styles.position === 'absolute' ? 'selected' : ''}>absolute</option>
+                                    <option ${styles.position === 'fixed' ? 'selected' : ''}>fixed</option>
+                                    <option ${styles.position === 'sticky' ? 'selected' : ''}>sticky</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderLayoutSection(element, styles) {
+                return `
+                    <div class="property-section">
+                        <div class="property-section-header">
+                            <span>Layout</span>
+                            <span class="property-section-icon">▼</span>
+                        </div>
+                        <div class="property-section-content">
+                            <div class="property-row">
+                                <div class="property-label">Display</div>
+                                <select class="property-input">
+                                    <option ${styles.display === 'block' ? 'selected' : ''}>block</option>
+                                    <option ${styles.display === 'inline' ? 'selected' : ''}>inline</option>
+                                    <option ${styles.display === 'flex' ? 'selected' : ''}>flex</option>
+                                    <option ${styles.display === 'grid' ? 'selected' : ''}>grid</option>
+                                    <option ${styles.display === 'none' ? 'selected' : ''}>none</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderDimensionsSection(element, styles) {
+                return `
+                    <div class="property-section">
+                        <div class="property-section-header">
+                            <span>Dimensions</span>
+                            <span class="property-section-icon">▼</span>
+                        </div>
+                        <div class="property-section-content">
+                            <div class="property-row">
+                                <div class="property-label">Width</div>
+                                <input type="text" class="property-input" value="${styles.width}">
+                            </div>
+                            <div class="property-row">
+                                <div class="property-label">Height</div>
+                                <input type="text" class="property-input" value="${styles.height}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTextSection(element, styles) {
+                return `
+                    <div class="property-section">
+                        <div class="property-section-header">
+                            <span>Text</span>
+                            <span class="property-section-icon">▼</span>
+                        </div>
+                        <div class="property-section-content">
+                            <div class="property-row">
+                                <div class="property-label">Font Size</div>
+                                <input type="text" class="property-input" value="${styles.fontSize}">
+                            </div>
+                            <div class="property-row">
+                                <div class="property-label">Color</div>
+                                <div class="color-input-group">
+                                    <input type="color" class="color-picker" value="${this.rgbToHex(styles.color) || '#000000'}">
+                                    <input type="text" class="property-input" value="${styles.color}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            rgbToHex(rgb) {
+                if (!rgb || rgb === 'transparent') return null;
+                const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                if (!match) return null;
+                const hex = (x) => ("0" + parseInt(x).toString(16)).slice(-2);
+                return "#" + hex(match[1]) + hex(match[2]) + hex(match[3]);
+            }
+        }
+
+        // 初始化
+        const treeManager = new ElementTreeManager();
+        const propertyManager = new PropertyPanelManager();
+
+        // 示例页面
+        document.getElementById('demoBtn').addEventListener('click', () => {
+            const demoHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>示例页面</title>
+                </head>
+                <body style="margin: 0; padding: 20px; font-family: sans-serif;">
+                    <header style="background: #00d4aa; padding: 20px; border-radius: 8px;">
+                        <h1 style="margin: 0; color: white;">欢迎使用 HTML 编辑器 Pro</h1>
+                    </header>
+                    <main style="margin-top: 20px;">
+                        <section style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <h2>功能特性</h2>
+                            <p>这是一个专业的 HTML 可视化编辑器，对标 Cursor 浏览器功能。</p>
+                        </section>
+                        <section style="background: #e8f5e9; padding: 20px; border-radius: 8px;">
+                            <h2>开始使用</h2>
+                            <p>点击左侧元素树中的任意元素，在右侧查看和编辑属性。</p>
+                        </section>
+                    </main>
+                </body>
+                </html>
+            `;
+
+            const iframe = document.getElementById('previewFrame');
+            iframe.srcdoc = demoHTML;
+
+            iframe.onload = () => {
+                const body = iframe.contentDocument.body;
+                treeManager.render(body);
+                document.getElementById('statusText').textContent = '示例页面已加载';
+            };
+        });
+
+        // 监听元素选中事件
+        window.addEventListener('elementSelected', (e) => {
+            const iframe = document.getElementById('previewFrame');
+            if (!iframe.contentDocument) return;
+
+            // 这里需要根据 elementPath 找到对应的元素
+            // 简化版本：暂时不实现
+            document.getElementById('selectedElement').textContent = `已选中: ${e.detail.elementPath}`;
+        });
+
+        // 设备切换
+        document.querySelectorAll('.device-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const device = btn.dataset.device;
+                const wrapper = document.querySelector('.preview-frame-wrapper');
+
+                switch (device) {
+                    case 'desktop':
+                        wrapper.style.maxWidth = '1280px';
+                        break;
+                    case 'tablet':
+                        wrapper.style.maxWidth = '768px';
+                        break;
+                    case 'mobile':
+                        wrapper.style.maxWidth = '375px';
+                        break;
+                }
+            });
+        });
+
+        // 初始化：加载示例
+        document.getElementById('demoBtn').click();
+    </script>
+</body>
+
+</html>
