@@ -959,16 +959,89 @@
                 if (el === editingEl) editingEl = null;
             }
 
+            // ---- 辅助函数：根据路径查找元素 ----
+            function findElementByPath(path) {
+                if (!path || path.length === 0) return null;
+                var el = document.body;
+                for (var i = 0; i < path.length; i++) {
+                    if (!el || !el.children) return null;
+                    el = el.children[path[i]];
+                }
+                return el;
+            }
+
             // ---- 下行 update / delete 指令处理（需求 5.1 / 8.1 / 8.4） ----
             function onMessage(e) {
                 var data = e && e.data;
-                if (!data || data.type !== 'update') return;
+                if (!data) return;
+
+                // 命令模式消息处理
+                if (data.type === 'updateStyle') {
+                    var el = findElementByPath(data.elementPath);
+                    if (el && el.style) {
+                        el.style[data.property] = data.value;
+                    }
+                    return;
+                }
+
+                if (data.type === 'updateText') {
+                    var el = findElementByPath(data.elementPath);
+                    if (el) {
+                        el.textContent = data.text;
+                    }
+                    return;
+                }
+
+                if (data.type === 'updateAttribute') {
+                    var el = findElementByPath(data.elementPath);
+                    if (el && typeof el.setAttribute === 'function') {
+                        el.setAttribute(data.attribute, data.value);
+                    }
+                    return;
+                }
+
+                if (data.type === 'deleteElement') {
+                    var el = findElementByPath(data.elementPath);
+                    if (el) {
+                        if (el.parentNode && typeof el.parentNode.removeChild === 'function') {
+                            el.parentNode.removeChild(el);
+                        } else if (typeof el.remove === 'function') {
+                            el.remove();
+                        }
+                    }
+                    return;
+                }
+
+                if (data.type === 'restoreElement') {
+                    var parent = findElementByPath(data.parentPath);
+                    if (parent) {
+                        var temp = document.createElement('div');
+                        temp.innerHTML = data.elementHTML;
+                        var restored = temp.firstChild;
+                        if (restored) {
+                            if (data.indexInParent >= parent.children.length) {
+                                parent.appendChild(restored);
+                            } else {
+                                parent.insertBefore(restored, parent.children[data.indexInParent]);
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                // 原有的 update 消息处理
+                if (data.type !== 'update') return;
                 if (!selectedEl) return;
                 var prop = data.prop;
                 var val = data.val == null ? '' : data.val;
 
                 if (prop === 'delete') {
                     var target = selectedEl;
+                    var path = getElementPath(target, document.body);
+                    var parentPath = getElementPath(target.parentElement, document.body);
+                    var indexInParent = Array.prototype.indexOf.call(target.parentElement.children, target);
+                    var elementHTML = target.outerHTML;
+
                     if (target.parentNode && typeof target.parentNode.removeChild === 'function') {
                         target.parentNode.removeChild(target);
                     } else if (typeof target.remove === 'function') {
@@ -977,26 +1050,94 @@
                     selectedEl = null;
                     if (hoveredEl === target) hoveredEl = null;
                     if (editingEl === target) editingEl = null;
+
                     post({
-                        type: 'deleted'
+                        type: 'deleted',
+                        command: {
+                            type: 'DeleteElement',
+                            elementPath: path,
+                            elementHTML: elementHTML,
+                            parentPath: parentPath,
+                            indexInParent: indexInParent
+                        }
                     });
                     return;
                 }
 
                 if (typeof prop !== 'string' || prop === '') return;
 
+                // 捕获旧值
+                var oldValue = null;
+                var path = getElementPath(selectedEl, document.body);
+
                 if (prop === 'text') {
+                    oldValue = selectedEl.textContent;
                     selectedEl.textContent = String(val);
+                    post({
+                        type: 'changed',
+                        command: {
+                            type: 'UpdateText',
+                            elementPath: path,
+                            oldText: oldValue,
+                            newText: String(val)
+                        }
+                    });
                 } else if (prop === 'src') {
+                    oldValue = selectedEl.getAttribute('src') || '';
                     if (typeof selectedEl.setAttribute === 'function') selectedEl.setAttribute('src', String(val));
+                    post({
+                        type: 'changed',
+                        command: {
+                            type: 'UpdateAttribute',
+                            elementPath: path,
+                            attribute: 'src',
+                            oldValue: oldValue,
+                            newValue: String(val)
+                        }
+                    });
                 } else if (prop === 'href') {
+                    oldValue = selectedEl.getAttribute('href') || '';
                     if (typeof selectedEl.setAttribute === 'function') selectedEl.setAttribute('href', String(val));
+                    post({
+                        type: 'changed',
+                        command: {
+                            type: 'UpdateAttribute',
+                            elementPath: path,
+                            attribute: 'href',
+                            oldValue: oldValue,
+                            newValue: String(val)
+                        }
+                    });
                 } else {
+                    oldValue = selectedEl.style[prop] || '';
                     if (selectedEl.style) selectedEl.style[prop] = val;
+                    post({
+                        type: 'changed',
+                        command: {
+                            type: 'UpdateStyle',
+                            elementPath: path,
+                            property: prop,
+                            oldValue: oldValue,
+                            newValue: val
+                        }
+                    });
                 }
-                post({
-                    type: 'changed'
-                });
+            }
+
+            function getElementPath(element, root) {
+                var path = [];
+                var current = element;
+                root = root || document.body;
+
+                while (current && current !== root && current.parentElement) {
+                    var parent = current.parentElement;
+                    var index = Array.prototype.indexOf.call(parent.children, current);
+                    if (index === -1) break;
+                    path.unshift(index);
+                    current = parent;
+                }
+
+                return path;
             }
 
             // ---- 注册监听并通知就绪 ----
@@ -1019,73 +1160,191 @@
         // 注入脚本节点 id —— inject / exporter / message-bus 共用，仅声明一次（需求 2.3 / 10.3）。
         var INJECTED_SCRIPT_ID = '__htmledit__';
 
-        // ---- 模块：history-manager.js（撤销/重做历史管理） ----
+        // ---- 模块：command-history.js（基于命令模式的撤销/重做） ----
         var MAX_HISTORY_SIZE = 50;
 
-        function createSnapshot(html, selectedInfo) {
+        function createUpdateStyleCommand(elementPath, property, oldValue, newValue) {
             return {
-                html: html,
-                selectedInfo: selectedInfo || null,
+                type: 'UpdateStyle',
+                elementPath: elementPath,
+                property: property,
+                oldValue: oldValue,
+                newValue: newValue,
                 timestamp: Date.now()
             };
         }
 
-        function createHistoryManager(options) {
+        function createUpdateTextCommand(elementPath, oldText, newText) {
+            return {
+                type: 'UpdateText',
+                elementPath: elementPath,
+                oldText: oldText,
+                newText: newText,
+                timestamp: Date.now()
+            };
+        }
+
+        function createUpdateAttributeCommand(elementPath, attribute, oldValue, newValue) {
+            return {
+                type: 'UpdateAttribute',
+                elementPath: elementPath,
+                attribute: attribute,
+                oldValue: oldValue,
+                newValue: newValue,
+                timestamp: Date.now()
+            };
+        }
+
+        function createDeleteElementCommand(elementPath, elementHTML, parentPath, indexInParent) {
+            return {
+                type: 'DeleteElement',
+                elementPath: elementPath,
+                elementHTML: elementHTML,
+                parentPath: parentPath,
+                indexInParent: indexInParent,
+                timestamp: Date.now()
+            };
+        }
+
+        function createCommandHistory(options) {
             options = options || {};
             var onStateChange = options.onStateChange || function() {};
-            var onRestore = options.onRestore || function() {};
+            var sendMessage = options.sendMessage || function() {};
 
             var history = [];
             var currentIndex = -1;
-            var enabled = true;
 
-            function push(snapshot) {
-                if (!enabled) {
-                    console.log('[History] push 被阻止 - 历史管理器已禁用');
+            function push(command) {
+                if (!command) {
+                    console.log('[CommandHistory] push 被阻止 - 命令为空');
                     return;
                 }
-                console.log('[History] push 快照, currentIndex:', currentIndex, 'history.length:', history.length);
+
+                // 如果不在栈顶，删除后面的历史
                 if (currentIndex < history.length - 1) {
                     history = history.slice(0, currentIndex + 1);
                 }
-                history.push(snapshot);
+
+                history.push(command);
+
+                // 限制历史栈大小
                 if (history.length > MAX_HISTORY_SIZE) {
                     history.shift();
                 } else {
                     currentIndex++;
                 }
-                console.log('[History] push 后, currentIndex:', currentIndex, 'history.length:', history.length);
+
                 notifyStateChange();
             }
 
             function undo() {
-                if (!canUndo()) return null;
-                console.log('[History] undo 前, currentIndex:', currentIndex, 'history.length:', history.length);
+                if (!canUndo()) return false;
+
+                var command = history[currentIndex];
                 currentIndex--;
-                var snapshot = history[currentIndex];
-                console.log('[History] undo 后, currentIndex:', currentIndex);
-                onRestore(snapshot);
+
+                // 执行反向操作
+                executeReverse(command);
+
                 notifyStateChange();
-                return snapshot;
+                return true;
             }
 
             function redo() {
-                if (!canRedo()) return null;
-                console.log('[History] redo 前, currentIndex:', currentIndex, 'history.length:', history.length);
+                if (!canRedo()) return false;
+
                 currentIndex++;
-                var snapshot = history[currentIndex];
-                console.log('[History] redo 后, currentIndex:', currentIndex);
-                onRestore(snapshot);
+                var command = history[currentIndex];
+
+                // 执行正向操作
+                executeForward(command);
+
                 notifyStateChange();
-                return snapshot;
+                return true;
+            }
+
+            function executeReverse(command) {
+                switch (command.type) {
+                    case 'UpdateStyle':
+                        sendMessage({
+                            type: 'updateStyle',
+                            elementPath: command.elementPath,
+                            property: command.property,
+                            value: command.oldValue
+                        });
+                        break;
+
+                    case 'UpdateText':
+                        sendMessage({
+                            type: 'updateText',
+                            elementPath: command.elementPath,
+                            text: command.oldText
+                        });
+                        break;
+
+                    case 'UpdateAttribute':
+                        sendMessage({
+                            type: 'updateAttribute',
+                            elementPath: command.elementPath,
+                            attribute: command.attribute,
+                            value: command.oldValue
+                        });
+                        break;
+
+                    case 'DeleteElement':
+                        sendMessage({
+                            type: 'restoreElement',
+                            parentPath: command.parentPath,
+                            elementHTML: command.elementHTML,
+                            indexInParent: command.indexInParent
+                        });
+                        break;
+                }
+            }
+
+            function executeForward(command) {
+                switch (command.type) {
+                    case 'UpdateStyle':
+                        sendMessage({
+                            type: 'updateStyle',
+                            elementPath: command.elementPath,
+                            property: command.property,
+                            value: command.newValue
+                        });
+                        break;
+
+                    case 'UpdateText':
+                        sendMessage({
+                            type: 'updateText',
+                            elementPath: command.elementPath,
+                            text: command.newText
+                        });
+                        break;
+
+                    case 'UpdateAttribute':
+                        sendMessage({
+                            type: 'updateAttribute',
+                            elementPath: command.elementPath,
+                            attribute: command.attribute,
+                            value: command.newValue
+                        });
+                        break;
+
+                    case 'DeleteElement':
+                        sendMessage({
+                            type: 'deleteElement',
+                            elementPath: command.elementPath
+                        });
+                        break;
+                }
             }
 
             function canUndo() {
-                return enabled && currentIndex > 0;
+                return currentIndex >= 0;
             }
 
             function canRedo() {
-                return enabled && currentIndex < history.length - 1;
+                return currentIndex < history.length - 1;
             }
 
             function clear() {
@@ -1094,21 +1353,12 @@
                 notifyStateChange();
             }
 
-            function disable() {
-                enabled = false;
-            }
-
-            function enable() {
-                enabled = true;
-            }
-
             function getState() {
                 return {
                     size: history.length,
                     currentIndex: currentIndex,
                     canUndo: canUndo(),
-                    canRedo: canRedo(),
-                    enabled: enabled
+                    canRedo: canRedo()
                 };
             }
 
@@ -1126,10 +1376,25 @@
                 canUndo: canUndo,
                 canRedo: canRedo,
                 clear: clear,
-                disable: disable,
-                enable: enable,
                 getState: getState
             };
+        }
+
+        // ---- 辅助函数：获取元素在父元素中的索引路径 ----
+        function getElementPath(element, root) {
+            var path = [];
+            var current = element;
+            root = root || document.body;
+
+            while (current && current !== root && current.parentElement) {
+                var parent = current.parentElement;
+                var index = Array.prototype.indexOf.call(parent.children, current);
+                if (index === -1) break;
+                path.unshift(index);
+                current = parent;
+            }
+
+            return path;
         }
 
         // ---- 模块：auto-saver.js（自动保存管理） ----
@@ -2576,6 +2841,12 @@
                 case 'textInput':
                     fn(message.text);
                     break;
+                case 'changed':
+                    fn(message.command);
+                    break;
+                case 'deleted':
+                    fn(message.command);
+                    break;
                 default:
                     fn();
                     break;
@@ -2748,11 +3019,8 @@
             renderCount();
             setStatus('已加载，点击任意元素开始编辑', '#00d4aa');
 
-            // 清空历史记录并保存初始快照
-            historyManager.clear();
-            setTimeout(function() {
-                saveHistorySnapshot();
-            }, 200);
+            // 清空命令历史记录
+            commandHistory.clear();
         }
 
         // ---- 文件加载器（点击选择 + 拖拽放入） ----
@@ -2783,48 +3051,19 @@
             }
         }
 
-        // ---- 历史管理器（撤销/重做） ----
+        // ---- 命令历史管理器（撤销/重做） ----
         var undoBtn = document.getElementById('undoBtn');
         var redoBtn = document.getElementById('redoBtn');
-        var isRestoring = false; // 标记是否正在恢复快照
 
-        var historyManager = createHistoryManager({
+        var commandHistory = createCommandHistory({
             onStateChange: function(state) {
                 // 更新撤销/重做按钮状态
                 undoBtn.disabled = !state.canUndo;
                 redoBtn.disabled = !state.canRedo;
             },
-            onRestore: function(snapshot) {
-                // 恢复快照：暂时断开消息总线，避免触发任何事件
-                console.log('[History] onRestore 开始');
-                isRestoring = true;
-                historyManager.disable();
-
-                // 暂时断开消息总线
-                bus.detach();
-                console.log('[History] 已断开消息总线');
-
-                // 使用 srcdoc 替换内容
-                iframe.srcdoc = snapshot.html;
-
-                // 恢复选中状态
-                if (snapshot.selectedInfo) {
-                    currentInfo = snapshot.selectedInfo;
-                } else {
-                    currentInfo = null;
-                    propertyPanel.clearForm();
-                    propertyPanel.setHasSelection(false);
-                }
-                setStatus('已撤销/重做', '#00d4aa');
-
-                // 延迟后重新连接消息总线并启用历史管理器
-                setTimeout(function() {
-                    bus.attach();
-                    console.log('[History] 已重新连接消息总线');
-                    historyManager.enable();
-                    isRestoring = false;
-                    console.log('[History] 恢复完成');
-                }, 1000);
+            sendMessage: function(message) {
+                // 向 iframe 发送命令消息
+                iframe.contentWindow.postMessage(message, '*');
             }
         });
 
@@ -2860,25 +3099,6 @@
             }
         }
 
-        // 保存历史快照的辅助函数
-        function saveHistorySnapshot() {
-            // 检查是否正在恢复快照或历史管理器是否启用
-            if (isRestoring) {
-                console.log('[History] saveHistorySnapshot 被阻止 - 正在恢复快照');
-                return;
-            }
-            if (!historyManager.getState().enabled) {
-                console.log('[History] saveHistorySnapshot 被阻止 - 历史管理器已禁用');
-                return;
-            }
-            var html = serializeCurrentDom();
-            if (html) {
-                var snapshot = createSnapshot(html, currentInfo);
-                console.log('[History] saveHistorySnapshot 调用 push');
-                historyManager.push(snapshot);
-            }
-        }
-
         // ---- 消息总线（按 message-bus.js「推荐接线」连接各模块） ----
         var bus = createMessageBus({
             iframe: iframe,
@@ -2906,10 +3126,6 @@
 
                 // textInput：实时文字同步；同一会话内多次 input 仅计 1（需求 4.4）。
                 onTextInput: function(text) {
-                    // 如果正在恢复快照，忽略此事件
-                    if (isRestoring) {
-                        return;
-                    }
                     var pText = document.getElementById('pText');
                     if (pText) pText.value = text;
                     if (currentSession == null) {
@@ -2918,34 +3134,32 @@
                     counter.markEditSessionChanged(currentSession);
                     renderStatus();
                     adjustHeight();
-                    // 暂时禁用自动保存
-                    // autoSaver.scheduleSave();
-                    // autoSaveStatusEl.textContent = '保存中...';
-                    // autoSaveStatusEl.style.color = '#f0a030';
+                    // 自动保存
+                    autoSaver.scheduleSave();
+                    autoSaveStatusEl.textContent = '保存中...';
+                    autoSaveStatusEl.style.color = '#f0a030';
                 },
 
                 // changed：一次成功的样式 / 属性更新 → Change_Count +1（需求 5.10）。
-                onChanged: function() {
-                    // 如果正在恢复快照，忽略此事件
-                    if (isRestoring) {
-                        return;
+                onChanged: function(command) {
+                    // 推送命令到历史记录
+                    if (command) {
+                        commandHistory.push(command);
                     }
                     counter.increment();
                     renderStatus();
                     adjustHeight();
-                    // 保存历史快照
-                    saveHistorySnapshot();
-                    // 暂时禁用自动保存，避免与撤销/重做冲突
-                    // autoSaver.scheduleSave();
-                    // autoSaveStatusEl.textContent = '保存中...';
-                    // autoSaveStatusEl.style.color = '#f0a030';
+                    // 自动保存
+                    autoSaver.scheduleSave();
+                    autoSaveStatusEl.textContent = '保存中...';
+                    autoSaveStatusEl.style.color = '#f0a030';
                 },
 
                 // deleted：清空属性面板 + 取消选中 + 计数（需求 8.3）。
-                onDeleted: function() {
-                    // 如果正在恢复快照，忽略此事件
-                    if (isRestoring) {
-                        return;
+                onDeleted: function(command) {
+                    // 推送命令到历史记录
+                    if (command) {
+                        commandHistory.push(command);
                     }
                     propertyPanel.clearForm();
                     propertyPanel.setHasSelection(false);
@@ -2954,12 +3168,10 @@
                     renderCount();
                     setStatus('元素已删除', '#ff6b6b');
                     elemPathEl.textContent = '— 未选中元素';
-                    // 保存历史快照
-                    saveHistorySnapshot();
-                    // 暂时禁用自动保存
-                    // autoSaver.scheduleSave();
-                    // autoSaveStatusEl.textContent = '保存中...';
-                    // autoSaveStatusEl.style.color = '#f0a030';
+                    // 自动保存
+                    autoSaver.scheduleSave();
+                    autoSaveStatusEl.textContent = '保存中...';
+                    autoSaveStatusEl.style.color = '#f0a030';
                 }
             }
         });
@@ -3011,10 +3223,12 @@
 
         // 撤销/重做按钮
         undoBtn.addEventListener('click', function() {
-            historyManager.undo();
+            commandHistory.undo();
+            setStatus('已撤销', '#00d4aa');
         });
         redoBtn.addEventListener('click', function() {
-            historyManager.redo();
+            commandHistory.redo();
+            setStatus('已重做', '#00d4aa');
         });
 
         // 键盘快捷键：Ctrl+Z 撤销，Ctrl+Y 重做
@@ -3026,13 +3240,15 @@
             if (e.ctrlKey || e.metaKey) {
                 if (e.key === 'z' && !isInput) {
                     e.preventDefault();
-                    if (historyManager.canUndo()) {
-                        historyManager.undo();
+                    if (commandHistory.canUndo()) {
+                        commandHistory.undo();
+                        setStatus('已撤销', '#00d4aa');
                     }
                 } else if (e.key === 'y' && !isInput) {
                     e.preventDefault();
-                    if (historyManager.canRedo()) {
-                        historyManager.redo();
+                    if (commandHistory.canRedo()) {
+                        commandHistory.redo();
+                        setStatus('已重做', '#00d4aa');
                     }
                 }
             }
