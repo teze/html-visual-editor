@@ -1833,7 +1833,12 @@
 
         function createAutoSaver(options) {
             options = options || {};
-            var getContent = options.getContent || function() { return { html: '', filename: '' }; };
+            var getContent = options.getContent || function() {
+                return {
+                    html: '',
+                    filename: ''
+                };
+            };
             var onSaved = options.onSaved || function() {};
             var onRestored = options.onRestored || function() {};
 
@@ -1891,10 +1896,16 @@
                     }
 
                     var meta = JSON.parse(metaStr);
-                    onRestored({ html: html, meta: meta });
+                    onRestored({
+                        html: html,
+                        meta: meta
+                    });
 
                     console.log('[AutoSaver] 恢复成功:', meta);
-                    return { html: html, meta: meta };
+                    return {
+                        html: html,
+                        meta: meta
+                    };
 
                 } catch (error) {
                     console.error('[AutoSaver] 恢复失败:', error);
@@ -3509,7 +3520,10 @@
             getContent: function() {
                 var html = serializeCurrentDom();
                 var filename = fileNameEl.textContent || '未命名文件';
-                return { html: html, filename: filename };
+                return {
+                    html: html,
+                    filename: filename
+                };
             },
             onSaved: function(meta) {
                 // 更新保存状态显示
@@ -3555,6 +3569,11 @@
                 elementTreeManager.render(treeBodyEl);
             }
         });
+
+        // 初始化自动保存
+        var autoSaver = createAutoSaver({
+            onSaved: function(data) {
+                console.log('[AutoSaver] 已保存:', data.meta);
             },
             onRestored: function(data) {
                 console.log('[AutoSaver] 恢复内容:', data.meta);

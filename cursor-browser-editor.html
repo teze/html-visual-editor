@@ -823,9 +823,14 @@
             iframe.srcdoc = demoHTML;
 
             iframe.onload = () => {
-                const body = iframe.contentDocument.body;
-                treeManager.render(body);
-                document.getElementById('statusText').textContent = '示例页面已加载';
+                try {
+                    const body = iframe.contentDocument.body;
+                    treeManager.render(body);
+                    document.getElementById('statusText').textContent = '示例页面已加载';
+                } catch (e) {
+                    console.error('无法访问 iframe 内容:', e);
+                    document.getElementById('statusText').textContent = '加载失败：请使用本地服务器运行';
+                }
             };
         });
 
