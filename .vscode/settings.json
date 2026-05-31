@@ -1,4 +1,4 @@
 {
-    "explorer.sortOrder": "default",
-    "explorerSort.currentSortType": "default"
+    "explorer.sortOrder": "type",
+    "explorerSort.currentSortType": "type"
 }
