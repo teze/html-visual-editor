@@ -51,7 +51,9 @@ code --install-extension html-visual-editor-0.1.0.vsix
 - 📄 **可视化编辑**：在预览界面直接点击元素进行编辑
 - 🎨 **属性面板**：修改文字、颜色、字体、尺寸等属性
 - 🔄 **实时预览**：所见即所得的编辑体验
-- 💾 **导出功能**：保存修改后的 HTML
+- ↶↷ **撤销/重做**：支持撤销和重做操作，最多保存 50 步历史记录
+- 💾 **自动保存**：修改后 2 秒自动保存到本地存储，刷新页面可恢复
+- 📤 **导出功能**：保存修改后的 HTML
 - 🎯 **零依赖**：无需额外配置
 
 ## 🎯 编辑功能
@@ -79,17 +81,31 @@ code --install-extension html-visual-editor-0.1.0.vsix
 ### 删除元素
 选中元素后，点击属性面板底部的"删除此元素"按钮
 
+### 撤销/重做
+- **撤销**：点击顶栏的"↶ 撤销"按钮，或按 `Ctrl+Z`（Mac: `Cmd+Z`）
+- **重做**：点击顶栏的"↷ 重做"按钮，或按 `Ctrl+Y`（Mac: `Cmd+Y`）
+- 最多保存 50 步历史记录
+- 按钮在无可用历史时自动禁用
+
+### 自动保存
+- 修改后 2 秒自动保存到浏览器本地存储
+- 顶栏显示保存状态（"已保存 刚刚" / "已保存 X 分钟前"）
+- 刷新页面时自动提示恢复未保存的内容
+- 导出文件后自动清除保存记录
+
 ## 🏗️ 项目结构
 
 ```
 HTML-Editor/
 ├── html-editor.html          # 独立版编辑器（单文件）
 ├── src/                      # 源代码模块
+│   ├── auto-saver.js         # 自动保存管理
 │   ├── change-counter.js     # 修改计数器
 │   ├── color.js              # 颜色转换工具
 │   ├── exporter.js           # HTML 导出
 │   ├── file-loader.js        # 文件加载
 │   ├── file-validation.js    # 文件验证
+│   ├── history-manager.js    # 撤销/重做历史管理
 │   ├── inject.js             # 脚本注入
 │   ├── injected-script.js    # iframe 内注入脚本
 │   ├── input-validation.js   # 输入验证

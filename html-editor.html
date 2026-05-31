@@ -22,8 +22,8 @@
 
         body {
             font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
-            background: #111;
-            color: #d0d0d0;
+            background: #f5f5f5;
+            color: #333;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -33,8 +33,8 @@
 
         .topbar {
             height: 48px;
-            background: #1a1a1a;
-            border-bottom: 1px solid #252525;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -47,7 +47,7 @@
         .logo {
             font-size: 15px;
             font-weight: 700;
-            color: #fff;
+            color: #333;
             letter-spacing: -.5px;
             margin-right: 8px
         }
@@ -59,7 +59,7 @@
         .sep {
             width: 1px;
             height: 20px;
-            background: #2a2a2a;
+            background: #e0e0e0;
             margin: 0 4px
         }
 
@@ -73,9 +73,9 @@
             gap: 5px;
             padding: 6px 12px;
             border-radius: 6px;
-            border: 1px solid #2e2e2e;
-            background: #222;
-            color: #aaa;
+            border: 1px solid #d0d0d0;
+            background: #fff;
+            color: #666;
             font-size: 12px;
             cursor: pointer;
             transition: all .12s;
@@ -84,9 +84,9 @@
         }
 
         .tbtn:hover {
-            background: #2a2a2a;
-            color: #fff;
-            border-color: #3a3a3a
+            background: #f8f8f8;
+            color: #333;
+            border-color: #b0b0b0
         }
 
         .tbtn.accent {
@@ -100,13 +100,19 @@
             background: #00eebb
         }
 
+        .tbtn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none
+        }
+
         .filelabel {
             font-size: 11px;
-            color: #777;
+            color: #666;
             padding: 3px 10px;
             border-radius: 4px;
-            background: #161616;
-            border: 1px solid #222;
+            background: #f0f0f0;
+            border: 1px solid #d0d0d0;
             max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -123,15 +129,15 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #141414;
+            background: #fafafa;
             overflow: hidden;
             position: relative
         }
 
         .canvas-bar {
             height: 32px;
-            background: #181818;
-            border-bottom: 1px solid #222;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             padding: 0 14px;
@@ -141,7 +147,7 @@
         }
 
         .canvas-bar .path {
-            color: #6a6a6a;
+            color: #666;
             font-family: monospace;
             font-size: 11px;
             flex: 1;
@@ -151,7 +157,7 @@
         }
 
         .canvas-bar .hint {
-            color: #444;
+            color: #999;
             white-space: nowrap
         }
 
@@ -161,13 +167,13 @@
             display: flex;
             justify-content: center;
             padding: 28px 28px 48px;
-            background: #141414
+            background: #fafafa
         }
 
         .canvas-frame {
             background: #fff;
             border-radius: 6px;
-            box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 16px 48px rgba(0, 0, 0, .6);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 8px 24px rgba(0, 0, 0, .12);
             width: 100%;
             max-width: 1280px;
             position: relative;
@@ -199,8 +205,8 @@
             width: 64px;
             height: 64px;
             border-radius: 18px;
-            background: #0d1f1e;
-            border: 1px solid #00d4aa22;
+            background: #e8f8f5;
+            border: 1px solid #00d4aa;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -210,7 +216,7 @@
         .welcome h2 {
             font-size: 20px;
             font-weight: 600;
-            color: #e8e8e8;
+            color: #333;
             letter-spacing: -.3px
         }
 
@@ -223,19 +229,20 @@
         }
 
         .dropzone {
-            border: 1.5px dashed #2a2a2a;
+            border: 1.5px dashed #d0d0d0;
             border-radius: 12px;
             padding: 28px 60px;
             text-align: center;
             cursor: pointer;
             transition: all .2s;
-            margin-top: 4px
+            margin-top: 4px;
+            background: #fafafa
         }
 
         .dropzone:hover,
         .dropzone.dragover {
             border-color: #00d4aa;
-            background: #00d4aa08
+            background: #e8f8f5
         }
 
         .dz-icon {
@@ -245,24 +252,26 @@
 
         .dz-main {
             font-size: 13px;
-            color: #888;
-            margin-bottom: 3px
+            color: #333;
+            margin-bottom: 3px;
+            font-weight: 500
         }
 
         .dz-sub {
             font-size: 11px;
-            color: #555
+            color: #999
         }
 
         .wlink {
             font-size: 12px;
-            color: #555;
+            color: #666;
             margin-top: 2px
         }
 
         .wlink span {
             color: #00d4aa;
-            cursor: pointer
+            cursor: pointer;
+            font-weight: 500
         }
 
         .wlink span:hover {
@@ -271,8 +280,8 @@
 
         .statusbar {
             height: 22px;
-            background: #111;
-            border-top: 1px solid #1c1c1c;
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             padding: 0 14px;
@@ -286,22 +295,22 @@
             width: 5px;
             height: 5px;
             border-radius: 50%;
-            background: #2a2a2a;
+            background: #d0d0d0;
             transition: background .15s
         }
 
         #statusText {
-            color: #888
+            color: #666
         }
 
         #changeCount {
-            color: #555
+            color: #999
         }
 
         .panel {
             width: 256px;
-            background: #1a1a1a;
-            border-left: 1px solid #222;
+            background: #fff;
+            border-left: 1px solid #e0e0e0;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -313,12 +322,12 @@
             padding: 0 14px;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid #e0e0e0;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #3a3a3a;
+            color: #999;
             flex-shrink: 0
         }
 
@@ -333,7 +342,7 @@
         }
 
         .panel-body::-webkit-scrollbar-thumb {
-            background: #2a2a2a;
+            background: #d0d0d0;
             border-radius: 2px
         }
 
@@ -344,7 +353,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            color: #444;
+            color: #999;
             font-size: 12px;
             text-align: center;
             padding: 20px
@@ -374,10 +383,11 @@
 
         .pl {
             font-size: 10px;
-            color: #555;
+            color: #999;
             margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: .6px
+            letter-spacing: .6px;
+            font-weight: 600
         }
 
         input.pi,
@@ -385,10 +395,10 @@
         select.pi {
             width: 100%;
             padding: 6px 9px;
-            background: #212121;
-            border: 1px solid #2e2e2e;
+            background: #fff;
+            border: 1px solid #d0d0d0;
             border-radius: 5px;
-            color: #ccc;
+            color: #333;
             font-size: 12px;
             outline: none;
             transition: border-color .12s;
@@ -398,7 +408,8 @@
         input.pi:focus,
         textarea.pi:focus,
         select.pi:focus {
-            border-color: #00d4aa
+            border-color: #00d4aa;
+            background: #fafafa
         }
 
         select.pi {
@@ -431,8 +442,8 @@
             width: 30px;
             height: 30px;
             border-radius: 5px;
-            border: 1px solid #2e2e2e;
-            background: #212121;
+            border: 1px solid #d0d0d0;
+            background: #fff;
             padding: 2px;
             cursor: pointer;
             flex-shrink: 0
@@ -444,17 +455,17 @@
 
         .divider {
             height: 1px;
-            background: #222;
+            background: #e0e0e0;
             margin: 14px 0
         }
 
         .abtn {
             width: 100%;
             padding: 7px 10px;
-            background: #1e1e1e;
-            border: 1px solid #2a2a2a;
+            background: #fff;
+            border: 1px solid #d0d0d0;
             border-radius: 5px;
-            color: #888;
+            color: #666;
             font-size: 12px;
             cursor: pointer;
             transition: all .12s;
@@ -467,14 +478,15 @@
         }
 
         .abtn:hover {
-            background: #252525;
-            color: #ccc;
-            border-color: #333
+            background: #f8f8f8;
+            color: #333;
+            border-color: #b0b0b0
         }
 
         .abtn.danger:hover {
             color: #ff6b6b;
-            border-color: #ff6b6b44
+            border-color: #ff6b6b;
+            background: #fff5f5
         }
 
         .seg {
@@ -490,7 +502,7 @@
 
         .seg .abtn.active {
             background: #00d4aa;
-            color: #000;
+            color: #fff;
             border-color: #00d4aa;
             font-weight: 600
         }
@@ -510,8 +522,8 @@
             font-size: 11px;
             margin-top: 10px;
             padding: 7px 9px;
-            background: #ff6b6b12;
-            border: 1px solid #ff6b6b33;
+            background: #fff5f5;
+            border: 1px solid #ffcccc;
             border-radius: 5px;
             line-height: 1.4;
             display: none
@@ -524,11 +536,16 @@
     <div class="topbar">
         <div class="logo">HTML<span>Edit</span></div>
         <div class="sep"></div>
+        <span class="filelabel" id="fileName">未打开文件</span>
+        <div class="sep"></div>
         <button class="tbtn" id="openBtn">📂 打开文件</button>
         <input type="file" id="fileIn" accept=".html,.htm" style="display:none">
         <button class="tbtn" id="demoBtn">✨ 示例页面</button>
         <div class="f1"></div>
-        <span class="filelabel" id="fileName">未打开文件</span>
+        <button class="tbtn" id="undoBtn" disabled title="撤销 (Ctrl+Z)">↶ 撤销</button>
+        <button class="tbtn" id="redoBtn" disabled title="重做 (Ctrl+Y)">↷ 重做</button>
+        <div class="sep"></div>
+        <span class="filelabel" id="autoSaveStatus" style="color:#666;margin-right:8px">未保存</span>
         <button class="tbtn accent" id="exportBtn" style="display:none">⬇ 导出 HTML</button>
     </div>
 
@@ -1001,6 +1018,275 @@
 
         // 注入脚本节点 id —— inject / exporter / message-bus 共用，仅声明一次（需求 2.3 / 10.3）。
         var INJECTED_SCRIPT_ID = '__htmledit__';
+
+        // ---- 模块：history-manager.js（撤销/重做历史管理） ----
+        var MAX_HISTORY_SIZE = 50;
+
+        function createSnapshot(html, selectedInfo) {
+            return {
+                html: html,
+                selectedInfo: selectedInfo || null,
+                timestamp: Date.now()
+            };
+        }
+
+        function createHistoryManager(options) {
+            options = options || {};
+            var onStateChange = options.onStateChange || function() {};
+            var onRestore = options.onRestore || function() {};
+
+            var history = [];
+            var currentIndex = -1;
+            var enabled = true;
+
+            function push(snapshot) {
+                if (!enabled) {
+                    console.log('[History] push 被阻止 - 历史管理器已禁用');
+                    return;
+                }
+                console.log('[History] push 快照, currentIndex:', currentIndex, 'history.length:', history.length);
+                if (currentIndex < history.length - 1) {
+                    history = history.slice(0, currentIndex + 1);
+                }
+                history.push(snapshot);
+                if (history.length > MAX_HISTORY_SIZE) {
+                    history.shift();
+                } else {
+                    currentIndex++;
+                }
+                console.log('[History] push 后, currentIndex:', currentIndex, 'history.length:', history.length);
+                notifyStateChange();
+            }
+
+            function undo() {
+                if (!canUndo()) return null;
+                console.log('[History] undo 前, currentIndex:', currentIndex, 'history.length:', history.length);
+                currentIndex--;
+                var snapshot = history[currentIndex];
+                console.log('[History] undo 后, currentIndex:', currentIndex);
+                onRestore(snapshot);
+                notifyStateChange();
+                return snapshot;
+            }
+
+            function redo() {
+                if (!canRedo()) return null;
+                console.log('[History] redo 前, currentIndex:', currentIndex, 'history.length:', history.length);
+                currentIndex++;
+                var snapshot = history[currentIndex];
+                console.log('[History] redo 后, currentIndex:', currentIndex);
+                onRestore(snapshot);
+                notifyStateChange();
+                return snapshot;
+            }
+
+            function canUndo() {
+                return enabled && currentIndex > 0;
+            }
+
+            function canRedo() {
+                return enabled && currentIndex < history.length - 1;
+            }
+
+            function clear() {
+                history = [];
+                currentIndex = -1;
+                notifyStateChange();
+            }
+
+            function disable() {
+                enabled = false;
+            }
+
+            function enable() {
+                enabled = true;
+            }
+
+            function getState() {
+                return {
+                    size: history.length,
+                    currentIndex: currentIndex,
+                    canUndo: canUndo(),
+                    canRedo: canRedo(),
+                    enabled: enabled
+                };
+            }
+
+            function notifyStateChange() {
+                onStateChange({
+                    canUndo: canUndo(),
+                    canRedo: canRedo()
+                });
+            }
+
+            return {
+                push: push,
+                undo: undo,
+                redo: redo,
+                canUndo: canUndo,
+                canRedo: canRedo,
+                clear: clear,
+                disable: disable,
+                enable: enable,
+                getState: getState
+            };
+        }
+
+        // ---- 模块：auto-saver.js（自动保存管理） ----
+        var STORAGE_KEY = 'html-editor-autosave';
+        var STORAGE_META_KEY = 'html-editor-autosave-meta';
+        var AUTO_SAVE_DELAY = 2000;
+
+        function createAutoSaver(options) {
+            options = options || {};
+            var getContent = options.getContent || function() { return { html: '', filename: '' }; };
+            var onSaved = options.onSaved || function() {};
+            var onRestored = options.onRestored || function() {};
+
+            var saveTimer = null;
+            var lastSavedTime = null;
+
+            function scheduleSave() {
+                if (saveTimer) {
+                    clearTimeout(saveTimer);
+                }
+                saveTimer = setTimeout(function() {
+                    saveNow();
+                }, AUTO_SAVE_DELAY);
+            }
+
+            function saveNow() {
+                try {
+                    var content = getContent();
+                    var html = content.html;
+                    var filename = content.filename;
+
+                    if (!html) {
+                        console.warn('[AutoSaver] 没有内容可保存');
+                        return false;
+                    }
+
+                    localStorage.setItem(STORAGE_KEY, html);
+
+                    var meta = {
+                        filename: filename || '未命名文件',
+                        savedAt: Date.now(),
+                        size: html.length
+                    };
+                    localStorage.setItem(STORAGE_META_KEY, JSON.stringify(meta));
+
+                    lastSavedTime = Date.now();
+                    onSaved(meta);
+
+                    console.log('[AutoSaver] 保存成功:', meta);
+                    return true;
+
+                } catch (error) {
+                    console.error('[AutoSaver] 保存失败:', error);
+                    return false;
+                }
+            }
+
+            function restore() {
+                try {
+                    var html = localStorage.getItem(STORAGE_KEY);
+                    var metaStr = localStorage.getItem(STORAGE_META_KEY);
+
+                    if (!html || !metaStr) {
+                        return null;
+                    }
+
+                    var meta = JSON.parse(metaStr);
+                    onRestored({ html: html, meta: meta });
+
+                    console.log('[AutoSaver] 恢复成功:', meta);
+                    return { html: html, meta: meta };
+
+                } catch (error) {
+                    console.error('[AutoSaver] 恢复失败:', error);
+                    return null;
+                }
+            }
+
+            function clear() {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(STORAGE_META_KEY);
+                    lastSavedTime = null;
+                    console.log('[AutoSaver] 已清除保存内容');
+                    return true;
+                } catch (error) {
+                    console.error('[AutoSaver] 清除失败:', error);
+                    return false;
+                }
+            }
+
+            function hasSavedContent() {
+                try {
+                    return !!localStorage.getItem(STORAGE_KEY);
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function getSavedMeta() {
+                try {
+                    var metaStr = localStorage.getItem(STORAGE_META_KEY);
+                    return metaStr ? JSON.parse(metaStr) : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function getLastSavedTime() {
+                return lastSavedTime;
+            }
+
+            function stop() {
+                if (saveTimer) {
+                    clearTimeout(saveTimer);
+                    saveTimer = null;
+                }
+            }
+
+            return {
+                scheduleSave: scheduleSave,
+                saveNow: saveNow,
+                restore: restore,
+                clear: clear,
+                hasSavedContent: hasSavedContent,
+                getSavedMeta: getSavedMeta,
+                getLastSavedTime: getLastSavedTime,
+                stop: stop
+            };
+        }
+
+        function formatSaveTime(timestamp) {
+            var now = Date.now();
+            var diff = now - timestamp;
+
+            if (diff < 60000) {
+                return '刚刚';
+            }
+
+            if (diff < 3600000) {
+                var minutes = Math.floor(diff / 60000);
+                return minutes + ' 分钟前';
+            }
+
+            if (diff < 86400000) {
+                var hours = Math.floor(diff / 3600000);
+                return hours + ' 小时前';
+            }
+
+            var date = new Date(timestamp);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
 
         // ---- 模块：color.js（rgb()/rgba() ↔ Hex 转换，需求 6） ----
         var COLOR_RGB_PATTERN = /^rgba?\(\s*(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*(?:[,/]\s*([0-9]*\.?[0-9]+)\s*)?\)$/i;
@@ -2461,6 +2747,12 @@
             clearAlignActive();
             renderCount();
             setStatus('已加载，点击任意元素开始编辑', '#00d4aa');
+
+            // 清空历史记录并保存初始快照
+            historyManager.clear();
+            setTimeout(function() {
+                saveHistorySnapshot();
+            }, 200);
         }
 
         // ---- 文件加载器（点击选择 + 拖拽放入） ----
@@ -2491,6 +2783,102 @@
             }
         }
 
+        // ---- 历史管理器（撤销/重做） ----
+        var undoBtn = document.getElementById('undoBtn');
+        var redoBtn = document.getElementById('redoBtn');
+        var isRestoring = false; // 标记是否正在恢复快照
+
+        var historyManager = createHistoryManager({
+            onStateChange: function(state) {
+                // 更新撤销/重做按钮状态
+                undoBtn.disabled = !state.canUndo;
+                redoBtn.disabled = !state.canRedo;
+            },
+            onRestore: function(snapshot) {
+                // 恢复快照：暂时断开消息总线，避免触发任何事件
+                console.log('[History] onRestore 开始');
+                isRestoring = true;
+                historyManager.disable();
+
+                // 暂时断开消息总线
+                bus.detach();
+                console.log('[History] 已断开消息总线');
+
+                // 使用 srcdoc 替换内容
+                iframe.srcdoc = snapshot.html;
+
+                // 恢复选中状态
+                if (snapshot.selectedInfo) {
+                    currentInfo = snapshot.selectedInfo;
+                } else {
+                    currentInfo = null;
+                    propertyPanel.clearForm();
+                    propertyPanel.setHasSelection(false);
+                }
+                setStatus('已撤销/重做', '#00d4aa');
+
+                // 延迟后重新连接消息总线并启用历史管理器
+                setTimeout(function() {
+                    bus.attach();
+                    console.log('[History] 已重新连接消息总线');
+                    historyManager.enable();
+                    isRestoring = false;
+                    console.log('[History] 恢复完成');
+                }, 1000);
+            }
+        });
+
+        // ---- 自动保存器 ----
+        var autoSaveStatusEl = document.getElementById('autoSaveStatus');
+
+        var autoSaver = createAutoSaver({
+            getContent: function() {
+                var html = serializeCurrentDom();
+                var filename = fileNameEl.textContent || '未命名文件';
+                return { html: html, filename: filename };
+            },
+            onSaved: function(meta) {
+                // 更新保存状态显示
+                autoSaveStatusEl.textContent = '已保存 ' + formatSaveTime(meta.savedAt);
+                autoSaveStatusEl.style.color = '#00d4aa';
+            },
+            onRestored: function(data) {
+                console.log('[AutoSaver] 恢复内容:', data.meta);
+            }
+        });
+
+        // 检查是否有未保存的内容
+        if (autoSaver.hasSavedContent()) {
+            var meta = autoSaver.getSavedMeta();
+            if (meta && confirm('发现未保存的内容（' + meta.filename + '，保存于 ' + formatSaveTime(meta.savedAt) + '），是否恢复？')) {
+                var restored = autoSaver.restore();
+                if (restored) {
+                    fileNameEl.textContent = restored.meta.filename;
+                    applyLoadedContent(restored.html);
+                    autoSaver.clear(); // 恢复后清除，避免重复提示
+                }
+            }
+        }
+
+        // 保存历史快照的辅助函数
+        function saveHistorySnapshot() {
+            // 检查是否正在恢复快照或历史管理器是否启用
+            if (isRestoring) {
+                console.log('[History] saveHistorySnapshot 被阻止 - 正在恢复快照');
+                return;
+            }
+            if (!historyManager.getState().enabled) {
+                console.log('[History] saveHistorySnapshot 被阻止 - 历史管理器已禁用');
+                return;
+            }
+            var html = serializeCurrentDom();
+            if (html) {
+                var snapshot = createSnapshot(html, currentInfo);
+                console.log('[History] saveHistorySnapshot 调用 push');
+                historyManager.push(snapshot);
+            }
+        }
+
         // ---- 消息总线（按 message-bus.js「推荐接线」连接各模块） ----
         var bus = createMessageBus({
             iframe: iframe,
@@ -2518,6 +2906,10 @@
 
                 // textInput：实时文字同步；同一会话内多次 input 仅计 1（需求 4.4）。
                 onTextInput: function(text) {
+                    // 如果正在恢复快照，忽略此事件
+                    if (isRestoring) {
+                        return;
+                    }
                     var pText = document.getElementById('pText');
                     if (pText) pText.value = text;
                     if (currentSession == null) {
@@ -2526,17 +2918,35 @@
                     counter.markEditSessionChanged(currentSession);
                     renderStatus();
                     adjustHeight();
+                    // 暂时禁用自动保存
+                    // autoSaver.scheduleSave();
+                    // autoSaveStatusEl.textContent = '保存中...';
+                    // autoSaveStatusEl.style.color = '#f0a030';
                 },
 
                 // changed：一次成功的样式 / 属性更新 → Change_Count +1（需求 5.10）。
                 onChanged: function() {
+                    // 如果正在恢复快照，忽略此事件
+                    if (isRestoring) {
+                        return;
+                    }
                     counter.increment();
                     renderStatus();
                     adjustHeight();
+                    // 保存历史快照
+                    saveHistorySnapshot();
+                    // 暂时禁用自动保存，避免与撤销/重做冲突
+                    // autoSaver.scheduleSave();
+                    // autoSaveStatusEl.textContent = '保存中...';
+                    // autoSaveStatusEl.style.color = '#f0a030';
                 },
 
                 // deleted：清空属性面板 + 取消选中 + 计数（需求 8.3）。
                 onDeleted: function() {
+                    // 如果正在恢复快照，忽略此事件
+                    if (isRestoring) {
+                        return;
+                    }
                     propertyPanel.clearForm();
                     propertyPanel.setHasSelection(false);
                     currentInfo = null;
@@ -2544,6 +2954,12 @@
                     renderCount();
                     setStatus('元素已删除', '#ff6b6b');
                     elemPathEl.textContent = '— 未选中元素';
+                    // 保存历史快照
+                    saveHistorySnapshot();
+                    // 暂时禁用自动保存
+                    // autoSaver.scheduleSave();
+                    // autoSaveStatusEl.textContent = '保存中...';
+                    // autoSaveStatusEl.style.color = '#f0a030';
                 }
             }
         });
@@ -2592,6 +3008,35 @@
         document.getElementById('demoBtn').addEventListener('click', loadDemo);
         document.getElementById('demoLink').addEventListener('click', loadDemo);
         exportBtnEl.addEventListener('click', doExport);
+
+        // 撤销/重做按钮
+        undoBtn.addEventListener('click', function() {
+            historyManager.undo();
+        });
+        redoBtn.addEventListener('click', function() {
+            historyManager.redo();
+        });
+
+        // 键盘快捷键：Ctrl+Z 撤销，Ctrl+Y 重做
+        document.addEventListener('keydown', function(e) {
+            // 检查是否在输入框中
+            var target = e.target;
+            var isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !isInput) {
+                    e.preventDefault();
+                    if (historyManager.canUndo()) {
+                        historyManager.undo();
+                    }
+                } else if (e.key === 'y' && !isInput) {
+                    e.preventDefault();
+                    if (historyManager.canRedo()) {
+                        historyManager.redo();
+                    }
+                }
+            }
+        });
 
         // 拖拽放入（画布区与欢迎区 dropzone）。
         function bindDropZone(el, highlight) {

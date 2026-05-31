@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>撤销/重做调试测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        .content {
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #editableText {
+            font-size: 24px;
+            color: #333;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>撤销/重做调试测试</h1>
+
+    <div class="controls">
+        <button onclick="modifyText()">修改文字</button>
+        <button onclick="modifyColor()">修改颜色</button>
+        <button onclick="undo()">↶ 撤销</button>
+        <button onclick="redo()">↷ 重做</button>
+        <button onclick="clearLog()">清空日志</button>
+    </div>
+
+    <div class="content">
+        <div id="editableText">这是可编辑的文字</div>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <script>
+        // 简化的历史管理器
+        let history = [];
+        let currentIndex = -1;
+        let isRestoring = false;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function saveSnapshot() {
+            if (isRestoring) {
+                log('❌ saveSnapshot 被阻止 - 正在恢复');
+                return;
+            }
+
+            const text = document.getElementById('editableText').textContent;
+            const color = document.getElementById('editableText').style.color;
+
+            // 如果不在栈顶，删除后面的历史
+            if (currentIndex < history.length - 1) {
+                history = history.slice(0, currentIndex + 1);
+                log(`🔪 删除 currentIndex 之后的历史，新长度: ${history.length}`);
+            }
+
+            history.push({ text, color });
+            currentIndex++;
+
+            log(`✅ 保存快照 #${currentIndex}: text="${text}", color="${color}"`);
+            log(`📊 状态: currentIndex=${currentIndex}, history.length=${history.length}`);
+        }
+
+        function modifyText() {
+            const el = document.getElementById('editableText');
+            el.textContent = '修改后的文字 ' + Math.floor(Math.random() * 100);
+            log('🖊️ 用户修改了文字');
+            saveSnapshot();
+        }
+
+        function modifyColor() {
+            const el = document.getElementById('editableText');
+            const colors = ['red', 'blue', 'green', 'purple', 'orange'];
+            el.style.color = colors[Math.floor(Math.random() * colors.length)];
+            log('🎨 用户修改了颜色');
+            saveSnapshot();
+        }
+
+        function undo() {
+            if (currentIndex <= 0) {
+                log('⚠️ 无法撤销 - 已经在最开始');
+                return;
+            }
+
+            log(`⬅️ 撤销前: currentIndex=${currentIndex}, history.length=${history.length}`);
+
+            currentIndex--;
+            const snapshot = history[currentIndex];
+
+            log(`📥 恢复快照 #${currentIndex}: text="${snapshot.text}", color="${snapshot.color}"`);
+
+            isRestoring = true;
+            log(`🔒 设置 isRestoring = true`);
+
+            document.getElementById('editableText').textContent = snapshot.text;
+            document.getElementById('editableText').style.color = snapshot.color;
+
+            setTimeout(() => {
+                isRestoring = false;
+                log(`🔓 500ms 后设置 isRestoring = false`);
+                log(`📊 撤销后状态: currentIndex=${currentIndex}, history.length=${history.length}`);
+            }, 500);
+        }
+
+        function redo() {
+            if (currentIndex >= history.length - 1) {
+                log('⚠️ 无法重做 - 已经在最新');
+                return;
+            }
+
+            log(`➡️ 重做前: currentIndex=${currentIndex}, history.length=${history.length}`);
+
+            currentIndex++;
+            const snapshot = history[currentIndex];
+
+            log(`📥 恢复快照 #${currentIndex}: text="${snapshot.text}", color="${snapshot.color}"`);
+
+            isRestoring = true;
+            log(`🔒 设置 isRestoring = true`);
+
+            document.getElementById('editableText').textContent = snapshot.text;
+            document.getElementById('editableText').style.color = snapshot.color;
+
+            setTimeout(() => {
+                isRestoring = false;
+                log(`🔓 500ms 后设置 isRestoring = false`);
+                log(`📊 重做后状态: currentIndex=${currentIndex}, history.length=${history.length}`);
+            }, 500);
+        }
+
+        // 初始化：保存初始状态
+        window.onload = function() {
+            log('🚀 页面加载完成');
+            saveSnapshot();
+        };
+    </script>
+</body>
+</html>

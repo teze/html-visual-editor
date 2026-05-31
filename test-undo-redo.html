@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试撤销/重做功能</title>
+    <style>
+        body {
+            font-family: -apple-system, 'PingFang SC', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #1e3c72;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #00d4aa;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <h1>测试撤销/重做功能</h1>
+
+    <p>这是一个测试页面，用于验证 HTML 编辑器的撤销/重做和自动保存功能。</p>
+
+    <div class="highlight">
+        <p><strong>测试步骤：</strong></p>
+        <ol>
+            <li>修改标题文字</li>
+            <li>修改段落颜色</li>
+            <li>点击撤销按钮（或按 Ctrl+Z）</li>
+            <li>点击重做按钮（或按 Ctrl+Y）</li>
+            <li>观察自动保存状态</li>
+        </ol>
+    </div>
+
+    <p>如果功能正常，你应该能看到：</p>
+    <ul>
+        <li>✅ 撤销/重做按钮在有历史记录时可用</li>
+        <li>✅ 修改后 2 秒自动保存</li>
+        <li>✅ 保存状态显示在顶栏</li>
+        <li>✅ 键盘快捷键 Ctrl+Z / Ctrl+Y 工作正常</li>
+    </ul>
+
+    <a href="#" class="button">测试按钮</a>
+</body>
+</html>
